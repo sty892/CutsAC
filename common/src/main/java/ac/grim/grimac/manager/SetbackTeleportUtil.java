@@ -42,6 +42,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
+import ac.grim.grimac.utils.anticheat.LogUtil;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
@@ -117,6 +118,7 @@ public class SetbackTeleportUtil extends Check implements PostPredictionCheck {
 
     public boolean executeViolationSetback() {
         if (isExempt()) return false;
+        LogUtil.console("Blocked illegal action for " + player.getName());
         blockMovementsUntilResync(true, false);
         return true;
     }

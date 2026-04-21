@@ -13,16 +13,20 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.parser.standard.IntegerParser;
 import org.incendo.cloud.parser.standard.StringParser;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class GrimHistory implements BuildableCommand {
 
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
         commandManager.command(
-                commandManager.commandBuilder("grim", "grimac")
-                        .literal("history", "hist")
+                commandManager.commandBuilder("grim", "grimac", "ac")
+                        .literal("history", "hist", "check")
                         .permission("grim.help")
                         .required("target", StringParser.stringParser(), adapter.onlinePlayerSuggestions())
                         .optional("page", IntegerParser.integerParser())
@@ -52,10 +56,10 @@ public class GrimHistory implements BuildableCommand {
 
         GrimAPI.INSTANCE.getScheduler().getAsyncScheduler().runNow(GrimAPI.INSTANCE.getGrimPlugin(), () -> {
             int entriesPerPage = GrimAPI.INSTANCE.getConfigManager().getConfig().getIntElse("history.entries-per-page", 15);
-            String header = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("grim-history-header",
-                    "%prefix% &bShowing logs for &f%player% (&f%page%&b/&f%maxPages%&f)");
-            String logFormat = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("grim-history-entry",
-                    "%prefix% &8[&f%server%&8] &bFailed &f%check% (x&c%vl%&f) &7%verbose% (&b%timeago% ago&7)");
+            String header = "%prefix% &bЛоги для &f%player% (&f%page%&b/&f%maxPages%&f)";
+            
+            // Custom format for /ac check
+            String logFormat = "%prefix% &8[&f%date%&8] &bНарушение &f%check% (x&c%vl%&f) &7%verbose% (&b%timeago% назад&7)";
 
             OfflinePlatformPlayer targetPlayer = GrimAPI.INSTANCE.getPlatformPlayerFactory().getOfflineFromName(target);
 
@@ -82,6 +86,7 @@ public class GrimHistory implements BuildableCommand {
                         .replace("%verbose%", log.verbose())
                         .replace("%vl%", String.valueOf(log.vl()))
                         .replace("%timeago%", getTimeAgo(log.createdAt()))
+                        .replace("%date%", dateFormat.format(new Date(log.createdAt())))
                         .replace("%server%", log.server())
                 )));
             }
@@ -92,7 +97,7 @@ public class GrimHistory implements BuildableCommand {
      * Calculates the time elapsed since a given timestamp in a human-readable format.
      *
      * @param timestamp The timestamp in milliseconds since epoch (e.g., from System.currentTimeMillis()).
-     * @return A string representing the time elapsed (e.g., "5d 3h 10m").
+     * @return A string representing the time elapsed (e.g., "5д 3ч 10м").
      */
     private String getTimeAgo(long timestamp) {
         // Calculate duration directly from current time and the provided timestamp
@@ -100,7 +105,7 @@ public class GrimHistory implements BuildableCommand {
 
         // Ensure duration is non-negative, though for "time ago" it should be.
         if (durationMillis < 0) {
-            return "0s"; // Or handle as an error/future time
+            return "0с"; // Or handle as an error/future time
         }
 
         long days = TimeUnit.MILLISECONDS.toDays(durationMillis);
@@ -115,10 +120,10 @@ public class GrimHistory implements BuildableCommand {
         long seconds = TimeUnit.MILLISECONDS.toSeconds(durationMillis);
 
         StringBuilder result = new StringBuilder();
-        if (days > 0) result.append(days).append("d ");
-        if (hours > 0) result.append(hours).append("h ");
-        if (minutes > 0) result.append(minutes).append("m ");
-        if (seconds > 0 || result.isEmpty()) result.append(seconds).append("s"); // Always show seconds if nothing else, or if it's 0s.
+        if (days > 0) result.append(days).append("д ");
+        if (hours > 0) result.append(hours).append("ч ");
+        if (minutes > 0) result.append(minutes).append("м ");
+        if (seconds > 0 || result.isEmpty()) result.append(seconds).append("с");
 
         return result.toString().trim();
     }
