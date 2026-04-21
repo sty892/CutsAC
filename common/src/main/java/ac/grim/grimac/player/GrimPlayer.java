@@ -318,6 +318,7 @@ public class GrimPlayer implements GrimUser {
     }
 
     public void onPacketCancel() {
+        LogUtil.console("Cancelled illegal packet from " + getName());
         if (spamThreshold != -1 && cancelledPackets.incrementAndGet() > spamThreshold) {
             LogUtil.info("Disconnecting " + getName() + " for spamming invalid packets, packets cancelled within a second " + cancelledPackets);
             disconnect(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(this, GrimAPI.INSTANCE.getConfigManager().getDisconnectClosed())));
