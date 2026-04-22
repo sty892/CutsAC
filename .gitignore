@@ -75,3 +75,5 @@ run/
 fabric/run/
 
 .ignored/
+
+log

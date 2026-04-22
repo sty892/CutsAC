@@ -1,5 +1,5 @@
 /**
- *          GrimAC Build Configuration
+ *          CustAC Build Configuration
  *
  * Build Flags:
  * -PshadePE=true   - Enables 'lite' mode
@@ -14,16 +14,16 @@ import versioning.VersionUtil
 
 BuildConfig.init(project)
 
-val baseVersion = "1.21.8"
-group = "ac.grim.grimac"
+val baseVersion = "1.21.9"
+group = "ac.cust.custac"
 version = VersionUtil.computeVersion(baseVersion)
 description = "Libre simulation anticheat designed for 26.1 with 1.8–26.1 support, powered by PacketEvents 2.0."
 
 ext["timestamp"] = System.currentTimeMillis().toString()
 ext["git_branch"] = VersionUtil.getGitBranch(true)
 ext["git_commit"] = VersionUtil.getGitCommitHash(true)
-ext["git_org"] = System.getenv("GRIM_GIT_ORG") ?: VersionUtil.getGitUser()
-ext["git_repo"] = System.getenv("GRIM_GIT_REPO") ?: "Grim"
+ext["git_org"] = System.getenv("CUSTAC_GIT_ORG") ?: VersionUtil.getGitUser()
+ext["git_repo"] = System.getenv("CUSTAC_GIT_REPO") ?: "custac"
 
 println("Build configuration:")
 println("    shadePE            = ${BuildConfig.shadePE}")

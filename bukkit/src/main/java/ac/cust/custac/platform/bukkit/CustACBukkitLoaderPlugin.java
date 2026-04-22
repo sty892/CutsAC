@@ -2,7 +2,6 @@ package ac.cust.custac.platform.bukkit;
 
 import ac.cust.custac.CustACAPI;
 import ac.cust.custac.CustACExternalAPI;
-import ac.grim.grimac.api.CustACAPIProvider;
 import ac.grim.grimac.api.GrimAbstractAPI;
 import ac.grim.grimac.api.event.EventBus;
 import ac.grim.grimac.api.plugin.GrimPlugin;

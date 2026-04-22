@@ -60,6 +60,6 @@ if (gradle.startParameter.isBuildScan) {
     }
 }
 
-rootProject.name = "grimac"
+rootProject.name = "custac"
 include("common")
 include("bukkit")

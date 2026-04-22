@@ -67,7 +67,7 @@ tasks {
                 "bungee.yml",
                 "velocity-plugin.json",
                 "fabric.mod.json",
-                "grimac.properties"
+                "custacac.properties"
             )
         ) {
             expand(properties)
