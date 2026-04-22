@@ -2,14 +2,14 @@ import versioning.BuildConfig
 
 plugins {
     `maven-publish`
-    grim.`base-conventions`
+    custac.`base-conventions`
 }
 
 repositories {
     // We still call mavenLocal() conditionally at the top for non-exclusive deps (general fallback)
     if (BuildConfig.mavenLocalOverride) mavenLocal()
 
-    // Grim API & PacketEvents
+    // grim API & PacketEvents
     exclusive("https://repo.grim.ac/snapshots") {
         includeGroup("ac.grim.grimac")
         includeGroup("com.github.retrooper")
