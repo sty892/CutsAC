@@ -10,86 +10,65 @@ import ac.cust.custac.platform.api.sender.Sender;
 import ac.cust.custac.utils.anticheat.MessageUtil;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.context.CommandContext;
-import org.incendo.cloud.parser.standard.IntegerParser;
 import org.incendo.cloud.parser.standard.StringParser;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class CustACHistory implements BuildableCommand {
+public class CustACCacCheck implements BuildableCommand {
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
-        // GrimAC style history command
         commandManager.command(
-                commandManager.commandBuilder("grimac")
-                        .literal("history", "hist")
+                commandManager.commandBuilder("cac")
+                        .literal("check")
                         .permission("custac.history")
                         .required("target", StringParser.stringParser(), adapter.onlinePlayerSuggestions())
-                        .optional("page", IntegerParser.integerParser())
-                        .handler(this::handleHistory)
+                        .handler(this::handleCheck)
         );
     }
 
-    private void handleHistory(CommandContext<Sender> context) {
+    private void handleCheck(CommandContext<Sender> context) {
         Sender sender = context.sender();
         String target = context.get("target");
-        Integer page = context.getOrDefault("page", 1);
 
         CustACAPI.INSTANCE.getScheduler().getAsyncScheduler().runNow(CustACAPI.INSTANCE.getGrimPlugin(), () -> {
-            int entriesPerPage = CustACAPI.INSTANCE.getConfigManager().getConfig().getIntElse("history.entries-per-page", 15);
-            String header = "%prefix% &bЛоги для &f%player% (&f%page%&b/&f%maxPages%&b)";
-            String logFormat = "%prefix% &8[&f%date%&8] &bНарушение &f%check% (x&c%vl%&f) &7%verbose% (&b%timeago% назад&7)";
-
             OfflinePlatformPlayer targetPlayer = CustACAPI.INSTANCE.getPlatformPlayerFactory().getOfflineFromName(target);
             ViolationDatabaseManager violations = CustACAPI.INSTANCE.getViolationDatabaseManager();
-            int logCount = violations.getLogCount(targetPlayer.getUniqueId());
 
-            if (logCount == 0) {
-                sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, "%prefix% &cЗаписей для этого игрока не найдено.")));
+            // Получаем последние 50 нарушений для анализа
+            List<Violation> logs = violations.getViolations(targetPlayer.getUniqueId(), 1, 50);
+
+            if (logs.isEmpty()) {
+                sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, "%prefix% &cИгрок &f" + target + " &cчист. Нарушений не найдено.")));
                 return;
             }
 
-            List<Violation> logs = violations.getViolations(targetPlayer.getUniqueId(), page, entriesPerPage);
-            int maxPages = (int) Math.ceil((float) logCount / entriesPerPage);
+            sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, "%prefix% &bВсе флаги игрока &f" + targetPlayer.getName() + "&b:")));
 
-            sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, header
-                    .replace("%player%", targetPlayer.getName())
-                    .replace("%page%", String.valueOf(page))
-                    .replace("%maxPages%", String.valueOf(maxPages))
-            )));
-
-            for (int i = logs.size() - 1; i >= 0; i--) {
-                Violation log = logs.get(i);
-                sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, logFormat
-                        .replace("%player%", targetPlayer.getName())
+            for (Violation log : logs) {
+                String message = " &8» &7[&f%timeago% назад&7] &bФлаг: &f%check% &7(VL: &c%vl%&7)\n &8  └ &7Детали: &f%verbose%";
+                sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, message
                         .replace("%check%", log.checkName())
-                        .replace("%verbose%", log.verbose())
                         .replace("%vl%", String.valueOf(log.vl()))
+                        .replace("%verbose%", log.verbose() != null ? log.verbose() : "Нет данных")
                         .replace("%timeago%", getTimeAgo(log.createdAt()))
-                        .replace("%date%", dateFormat.format(new Date(log.createdAt())))
                 )));
             }
         });
     }
 
     /**
-     * Calculates the time elapsed since a given timestamp in a human-readable format.
-     *
-     * @param timestamp The timestamp in milliseconds since epoch (e.g., from System.currentTimeMillis()).
-     * @return A string representing the time elapsed (e.g., "5д 3ч 10м").
+     * Вычисляет прошедшее время в человекочитаемом формате.
      */
     private String getTimeAgo(long timestamp) {
-        // Calculate duration directly from current time and the provided timestamp
         long durationMillis = System.currentTimeMillis() - timestamp;
 
-        // Ensure duration is non-negative, though for "time ago" it should be.
         if (durationMillis < 0) {
-            return "0с"; // Or handle as an error/future time
+            return "0с";
         }
 
         long days = TimeUnit.MILLISECONDS.toDays(durationMillis);

@@ -58,6 +58,7 @@ public class CloudCommandService implements CommandService {
         new CustACBrands().register(commandManager, commandAdapter);
         new CustACList().register(commandManager, commandAdapter);
         new CustACTestWebhook().register(commandManager, commandAdapter);
+        new CustACCacCheck().register(commandManager, commandAdapter);
 
         final RequirementPostprocessor<Sender, SenderRequirement>
                 senderRequirementPostprocessor = RequirementPostprocessor.of(
