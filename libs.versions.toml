@@ -5,7 +5,6 @@ adventure-platform-bukkit = "4.4.0"
 paper-api = "1.20.6-R0.1-SNAPSHOT"
 cloud = "2.0.0"
 cloud-paper = "2.0.0-beta.15"
-cloud-fabric = "2.0.0-beta.15"
 cloud-processors-requirements = "1.0.0-rc.1"
 
 # --- Minecraft-Specific APIs ---
@@ -25,8 +24,6 @@ snakeyaml = "2.2"
 configuralize = "1.4.1" # :slim classifier is applied in build.gradle.kts
 
 # --- Build & Tooling ---
-fabric-loader = "0.16.14"
-fabric-loom = "1.15.5"
 lombok = "9.0.0"
 shadow = "9.3.0"
 spotless = "6.25.0"
@@ -36,7 +33,6 @@ spotless = "6.25.0"
 adventure-platform-bukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-platform-bukkit" }
 adventure-text-minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure" }
 cloud-core = { group = "org.incendo", name = "cloud-core", version.ref = "cloud" }
-cloud-fabric = { group = "org.incendo", name = "cloud-fabric", version.ref = "cloud-fabric" }
 cloud-paper = { group = "org.incendo", name = "cloud-paper", version.ref = "cloud-paper" }
 cloud-processors-requirements = { group = "org.incendo", name = "cloud-processors-requirements", version.ref = "cloud-processors-requirements" }
 
@@ -52,9 +48,7 @@ grim-api = { group = "ac.grim.grimac", name = "GrimAPI", version.ref = "grimac-a
 grim-internal = { group = "ac.grim.grimac", name = "grim-internal", version.ref = "grimac-api" }
 grim-internal-shims = { group = "ac.grim.grimac", name = "grim-internal-shims", version.ref = "grimac-api" }
 grim-bukkit-internal = { group = "ac.grim.grimac", name = "grim-bukkit-internal", version.ref = "grimac-api" }
-grim-fabric-internal = { group = "ac.grim.grimac", name = "grim-fabric-internal", version.ref = "grimac-api" }
 packetevents-api = { group = "com.github.retrooper", name = "packetevents-api", version.ref = "packetevents" }
-packetevents-fabric = { group  = "com.github.retrooper", name = "packetevents-fabric", version.ref = "packetevents" }
 packetevents-spigot = { group = "com.github.retrooper", name = "packetevents-spigot", version.ref = "packetevents"}
 viaversion = { group = "com.viaversion", name = "viaversion", version.ref = "viaversion" }
 
@@ -64,9 +58,6 @@ hikaricp = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikaricp" }
 jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations" }
 netty = { group = "io.netty", name = "netty-all", version.ref = "netty" }
 snakeyaml = { group = "org.yaml", name = "snakeyaml", version.ref = "snakeyaml" }
-
-# --- Build Tooling (Fabric) ---
-fabric-loader = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric-loader" }
 
 # --- Gradle Plugin Definitions ---
 # These are referenced by the [plugins] section or applied directly in build scripts
@@ -83,7 +74,6 @@ shadow = { "group" = "com.gradleup.shadow", name = "shadow-gradle-plugin", versi
 cloud-api = ["cloud-core", "cloud-processors-requirements"]
 
 [plugins]
-fabric-loom = { id = "fabric-loom", version.ref = "fabric-loom" }
 lombok = { id = "io.freefair.lombok", version.ref = "lombok" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
