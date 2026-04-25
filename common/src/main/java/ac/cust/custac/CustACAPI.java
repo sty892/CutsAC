@@ -11,6 +11,7 @@ import ac.cust.custac.manager.SpectateManager;
 import ac.cust.custac.manager.TickManager;
 import ac.cust.custac.manager.config.BaseConfigManager;
 import ac.cust.custac.manager.init.Initable;
+import ac.cust.custac.manager.suspect.SuspectManager;
 import ac.cust.custac.manager.violationdatabase.ViolationDatabaseManager;
 import ac.cust.custac.platform.api.Platform;
 import ac.cust.custac.platform.api.PlatformLoader;
@@ -40,6 +41,7 @@ public final class CustACAPI {
     private final AlertManagerImpl alertManager;
     private final SpectateManager spectateManager;
     private final DiscordManager discordManager;
+    private final SuspectManager suspectManager;
     private final PlayerDataManager playerDataManager;
     private final TickManager tickManager;
     private final GrimExtensionManager extensionManager;
@@ -56,6 +58,7 @@ public final class CustACAPI {
         this.alertManager = new AlertManagerImpl();
         this.spectateManager = new SpectateManager();
         this.discordManager = new DiscordManager();
+        this.suspectManager = new SuspectManager();
         this.playerDataManager = new PlayerDataManager();
         this.tickManager = new TickManager();
         this.extensionManager = new GrimExtensionManager();

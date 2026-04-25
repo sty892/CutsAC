@@ -78,7 +78,10 @@ public class PlayerDataManager {
 
     public void onDisconnect(User user) {
         CustACPlayer custacPlayer = remove(user);
-        if (custacPlayer != null) CustACAPI.INSTANCE.getEventBus().post(new GrimQuitEvent(custacPlayer));
+        if (custacPlayer != null) {
+            CustACAPI.INSTANCE.getSuspectManager().recordLogoutLocation(custacPlayer);
+            CustACAPI.INSTANCE.getEventBus().post(new GrimQuitEvent(custacPlayer));
+        }
         exemptUsers.remove(user);
 
         UUID uuid = user.getProfile().getUUID();

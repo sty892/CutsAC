@@ -150,6 +150,12 @@ bukkit {
             default = Permission.Default.FALSE
         }
 
+        register("custac.admin") {
+            description =
+                "Use CustAC moderation commands"
+            default = Permission.Default.OP
+        }
+
     }
 }
 

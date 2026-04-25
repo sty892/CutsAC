@@ -1,5 +1,6 @@
 package ac.cust.custac.manager;
 
+import ac.cust.custac.CustACAPI;
 import ac.cust.custac.manager.tick.Tickable;
 import ac.cust.custac.manager.tick.impl.ClearRecentlyUpdatedBlocks;
 import ac.cust.custac.manager.tick.impl.ClientVersionSetter;
@@ -29,6 +30,7 @@ public class TickManager {
     public void tickSync() {
         currentTick++;
         syncTick.values().forEach(Tickable::tick);
+        CustACAPI.INSTANCE.getSuspectManager().tick();
     }
 
     public void tickAsync() {

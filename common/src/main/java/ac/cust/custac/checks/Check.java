@@ -103,6 +103,7 @@ public class Check extends CustACProcessor implements AbstractCheck {
         player.punishmentManager.handleViolation(this);
         lastViolationTime = System.currentTimeMillis();
         violations++;
+        CustACAPI.INSTANCE.getSuspectManager().recordFlag(player, this, verbose, (int) Math.ceil(violations));
         return true;
     }
 

@@ -41,24 +41,7 @@ public class CloudCommandService implements CommandService {
     public void registerCommands() {
         if (commandsRegistered) return;
         CommandManager<Sender> commandManager = commandManagerSupplier.get();
-        new CustACPerf().register(commandManager, commandAdapter);
-        new CustACDebug().register(commandManager, commandAdapter);
-        new CustACAlerts().register(commandManager, commandAdapter);
-        new CustACProfile().register(commandManager, commandAdapter);
-        new CustACSendAlert().register(commandManager, commandAdapter);
-        new CustACHelp().register(commandManager, commandAdapter);
-        new CustACHistory().register(commandManager, commandAdapter);
-        new CustACReload().register(commandManager, commandAdapter);
-        new CustACSpectate().register(commandManager, commandAdapter);
-        new CustACStopSpectating().register(commandManager, commandAdapter);
-        new CustACLog().register(commandManager, commandAdapter);
-        new CustACVerbose().register(commandManager, commandAdapter);
-        new CustACVersion().register(commandManager, commandAdapter);
-        new CustACDump().register(commandManager, commandAdapter);
-        new CustACBrands().register(commandManager, commandAdapter);
-        new CustACList().register(commandManager, commandAdapter);
-        new CustACTestWebhook().register(commandManager, commandAdapter);
-        new CustACCacCheck().register(commandManager, commandAdapter);
+        new CustACCommand().register(commandManager, commandAdapter);
 
         final RequirementPostprocessor<Sender, SenderRequirement>
                 senderRequirementPostprocessor = RequirementPostprocessor.of(
