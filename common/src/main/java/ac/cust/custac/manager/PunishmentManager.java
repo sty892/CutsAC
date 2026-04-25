@@ -110,8 +110,13 @@ public class PunishmentManager implements ConfigReloadable {
 
     public boolean handleAlert(CustACPlayer player, String verbose, Check check) {
         boolean sentDebug = false;
+        
+        // Log every single alert to the database automatically for /cac check
+        // This ensures fly, speed, airjump etc. are visible even if not in punishments.yml
+        String verboseWithoutGl = verbose.replaceAll(" /gl .*", "");
+        CustACAPI.INSTANCE.getViolationDatabaseManager().logAlert(player, verboseWithoutGl, check.getDisplayName(), getViolationsForCheck(check));
 
-        // Check commands
+        // Check commands from punishments.yml
         for (PunishGroup group : groups) {
             if (group.checks.contains(check)) {
                 final int vl = getViolations(group, check);
@@ -140,9 +145,7 @@ public class PunishmentManager implements ConfigReloadable {
                             switch (command.command) {
                                 case "[webhook]" -> CustACAPI.INSTANCE.getDiscordManager().sendAlert(player, verbose, check.getDisplayName(), vl);
                                 case "[log]" -> {
-                                    int vls = (int) group.violations.values().stream().filter((e) -> e == check).count();
-                                    String verboseWithoutGl = verbose.replaceAll(" /gl .*", "");
-                                    CustACAPI.INSTANCE.getViolationDatabaseManager().logAlert(player, verboseWithoutGl, check.getDisplayName(), vls);
+                                    // Already logged above automatically
                                 }
                                 case "[proxy]" -> ProxyAlertMessenger.sendPluginMessage(cmd);
                                 case "[alert]" -> {
@@ -172,6 +175,16 @@ public class PunishmentManager implements ConfigReloadable {
         }
 
         return sentDebug;
+    }
+
+    private int getViolationsForCheck(Check check) {
+        int totalVl = 0;
+        for (PunishGroup group : groups) {
+            if (group.checks.contains(check)) {
+                totalVl += getViolations(group, check);
+            }
+        }
+        return totalVl;
     }
 
     public void handleViolation(Check check) {

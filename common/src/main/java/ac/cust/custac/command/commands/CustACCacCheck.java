@@ -29,6 +29,23 @@ public class CustACCacCheck implements BuildableCommand {
                         .required("target", StringParser.stringParser(), adapter.onlinePlayerSuggestions())
                         .handler(this::handleCheck)
         );
+
+        commandManager.command(
+                commandManager.commandBuilder("cac")
+                        .literal("alerts")
+                        .permission("custac.alerts")
+                        .handler(this::handleAlerts)
+        );
+    }
+
+    private void handleAlerts(CommandContext<Sender> context) {
+        Sender sender = context.sender();
+        if (sender.isPlayer()) {
+            boolean newState = !CustACAPI.INSTANCE.getAlertManager().hasAlertsEnabled(sender.getPlatformPlayer());
+            CustACAPI.INSTANCE.getAlertManager().setAlertsEnabled(sender.getPlatformPlayer(), newState, false);
+        } else if (sender.isConsole()) {
+            CustACAPI.INSTANCE.getAlertManager().toggleConsoleAlerts();
+        }
     }
 
     private void handleCheck(CommandContext<Sender> context) {
@@ -39,26 +56,32 @@ public class CustACCacCheck implements BuildableCommand {
             OfflinePlatformPlayer targetPlayer = CustACAPI.INSTANCE.getPlatformPlayerFactory().getOfflineFromName(target);
             ViolationDatabaseManager violations = CustACAPI.INSTANCE.getViolationDatabaseManager();
 
-            // Получаем последние 50 нарушений для анализа
             List<Violation> logs = violations.getViolations(targetPlayer.getUniqueId(), 1, 50);
 
             if (logs.isEmpty()) {
-                sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, "%prefix% &cИгрок &f" + target + " &cчист. Нарушений не найдено.")));
+                sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, "%prefix% &cИгрок &f" + target + " &cчист. Нарушений в базе нет.")));
                 return;
             }
 
-            sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, "%prefix% &bВсе флаги игрока &f" + targetPlayer.getName() + "&b:")));
+            sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, "%prefix% &bИстория флагов &f" + targetPlayer.getName() + "&b:")));
 
             for (Violation log : logs) {
-                String message = " &8» &7[&f%timeago% назад&7] &bФлаг: &f%check% &7(VL: &c%vl%&7)\n &8  └ &7Детали: &f%verbose%";
+                // Красивый вывод с разделением на тип и детали
+                String message = " &8» &f%check% &7(x&c%vl%&7) &b%timeago% назад\n &8  └ &7Инфо: &f%verbose%";
                 sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, message
                         .replace("%check%", log.checkName())
                         .replace("%vl%", String.valueOf(log.vl()))
-                        .replace("%verbose%", log.verbose() != null ? log.verbose() : "Нет данных")
+                        .replace("%verbose%", formatVerbose(log.verbose()))
                         .replace("%timeago%", getTimeAgo(log.createdAt()))
                 )));
             }
         });
+    }
+
+    private String formatVerbose(String verbose) {
+        if (verbose == null || verbose.isEmpty()) return "Нет данных";
+        // Убираем технические хвосты если есть
+        return verbose.split(" /gl ")[0].trim();
     }
 
     /**
