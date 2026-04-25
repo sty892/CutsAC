@@ -139,7 +139,7 @@ public class CustACVersion implements BuildableCommand {
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
         commandManager.command(
-                commandManager.commandBuilder("custac", "custacac")
+                commandManager.commandBuilder("grimac")
                         .literal("version")
                         .permission("custac.version")
                         .handler(this::handleVersion)

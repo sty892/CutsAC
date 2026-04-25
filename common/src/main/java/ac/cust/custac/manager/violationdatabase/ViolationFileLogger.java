@@ -29,7 +29,7 @@ public class ViolationFileLogger {
 
     public void log(CustACPlayer player, String custacVersion, String verbose, String checkName, int vls) {
         File playerFile = new File(logsFolder, player.getUniqueId() + ".log");
-        
+
         long timestamp = System.currentTimeMillis();
         String brand = player.getBrand();
         String clientVersion = player.getClientVersion().getReleaseName();

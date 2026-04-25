@@ -15,7 +15,7 @@ public class CustACBrands implements BuildableCommand {
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
         commandManager.command(
-                commandManager.commandBuilder("custac", "custacac")
+                commandManager.commandBuilder("ac")
                         .literal("brands", Description.of("Toggle brands for the sender"))
                         .permission("custac.brand")
                         .handler(this::handleBrands)

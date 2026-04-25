@@ -20,7 +20,7 @@ public class CustACSpectate implements BuildableCommand {
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
         commandManager.command(
-                commandManager.commandBuilder("custac", "custacac")
+                commandManager.commandBuilder("ac")
                         .literal("spectate")
                         .permission("custac.spectate")
                         .required("target", adapter.singlePlayerSelectorParser())

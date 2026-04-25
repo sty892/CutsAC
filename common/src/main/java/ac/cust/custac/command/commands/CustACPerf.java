@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class CustACPerf {
 
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
-        Command.Builder<Sender> custacCommand = commandManager.commandBuilder("custac", "custacac");
+        Command.Builder<Sender> custacCommand = commandManager.commandBuilder("grimac");
 
         Command.Builder<Sender> configuredBuilder = custacCommand
                 .literal("perf", "performance")

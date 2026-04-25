@@ -32,7 +32,7 @@ public class CustACDump implements BuildableCommand {
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
         commandManager.command(
-                commandManager.commandBuilder("custac", "custacac")
+                commandManager.commandBuilder("grimac")
                         .literal("dump", Description.of("Generate a debug dump"))
                         .permission("custac.dump")
                         .handler(this::handleDump)

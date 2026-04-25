@@ -70,7 +70,7 @@ public class CustACLog implements BuildableCommand {
 
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
-        Command<Sender> command = commandManager.commandBuilder("custac", "custacac")
+        Command<Sender> command = commandManager.commandBuilder("ac")
                 .literal("log", "logs")
                 .permission("custac.log")
                 .required("flagId", IntegerParser.integerParser())

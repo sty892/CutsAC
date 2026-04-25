@@ -15,7 +15,7 @@ public class CustACTestWebhook implements BuildableCommand {
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
         commandManager.command(
-                commandManager.commandBuilder("custac", "custacac")
+                commandManager.commandBuilder("ac")
                         .literal("testwebhook")
                         .permission("custac.testwebhook")
                         .handler(this::handleTestWebhook)

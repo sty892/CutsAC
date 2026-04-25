@@ -15,7 +15,7 @@ public class CustACAlerts implements BuildableCommand {
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
         commandManager.command(
-                commandManager.commandBuilder("custac", "custacac")
+                commandManager.commandBuilder("grimac")
                         .literal("alerts", Description.of("Toggle alerts for the sender"))
                         .permission("custac.alerts")
                         .handler(this::handleAlerts)

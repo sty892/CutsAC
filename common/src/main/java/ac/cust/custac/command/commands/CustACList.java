@@ -30,7 +30,7 @@ public class CustACList implements BuildableCommand {
 
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
-        commandManager.command(commandManager.commandBuilder("custac", "custacac")
+        commandManager.command(commandManager.commandBuilder("grimac")
                 .literal("list")
                 .permission("custac.list")
                 .required("list", StringParser.stringParser(), SUGGESTIONS)

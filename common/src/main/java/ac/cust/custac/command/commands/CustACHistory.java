@@ -24,14 +24,23 @@ public class CustACHistory implements BuildableCommand {
 
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
+        // GrimAC style history command
         commandManager.command(
-                commandManager.commandBuilder("custac", "custacac", "ac")
-                        .literal("history", "hist", "check")
-                        .permission("custac.help")
+                commandManager.commandBuilder("grimac")
+                        .literal("history", "hist")
+                        .permission("custac.history")
                         .required("target", StringParser.stringParser(), adapter.onlinePlayerSuggestions())
                         .optional("page", IntegerParser.integerParser())
-                        .permission("custac.history")
                         .handler(this::handleHistory)
+        );
+
+        // New CustAC check command
+        commandManager.command(
+                commandManager.commandBuilder("ac")
+                        .literal("check")
+                        .permission("custac.history")
+                        .required("target", StringParser.stringParser(), adapter.onlinePlayerSuggestions())
+                        .handler(this::handleCheck)
         );
     }
 
@@ -43,15 +52,12 @@ public class CustACHistory implements BuildableCommand {
         CustACAPI.INSTANCE.getScheduler().getAsyncScheduler().runNow(CustACAPI.INSTANCE.getGrimPlugin(), () -> {
             int entriesPerPage = CustACAPI.INSTANCE.getConfigManager().getConfig().getIntElse("history.entries-per-page", 15);
             String header = "%prefix% &bЛоги для &f%player% (&f%page%&b/&f%maxPages%&b)";
-            
-            // Custom format for /ac check
             String logFormat = "%prefix% &8[&f%date%&8] &bНарушение &f%check% (x&c%vl%&f) &7%verbose% (&b%timeago% назад&7)";
 
             OfflinePlatformPlayer targetPlayer = CustACAPI.INSTANCE.getPlatformPlayerFactory().getOfflineFromName(target);
-
             ViolationDatabaseManager violations = CustACAPI.INSTANCE.getViolationDatabaseManager();
             int logCount = violations.getLogCount(targetPlayer.getUniqueId());
-            
+
             if (logCount == 0) {
                 sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, "%prefix% &cЗаписей для этого игрока не найдено.")));
                 return;
@@ -70,17 +76,55 @@ public class CustACHistory implements BuildableCommand {
                 Violation log = logs.get(i);
                 sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, logFormat
                         .replace("%player%", targetPlayer.getName())
-                        .replace("%custac_version%", log.custacVersion())
-                        .replace("%client_brand%", log.clientBrand())
-                        .replace("%client_version%", log.clientVersion())
-                        .replace("%server_version%", log.serverVersion())
                         .replace("%check%", log.checkName())
                         .replace("%verbose%", log.verbose())
                         .replace("%vl%", String.valueOf(log.vl()))
                         .replace("%timeago%", getTimeAgo(log.createdAt()))
                         .replace("%date%", dateFormat.format(new Date(log.createdAt())))
-                        .replace("%server%", log.server())
                 )));
+            }
+        });
+    }
+
+    private void handleCheck(CommandContext<Sender> context) {
+        Sender sender = context.sender();
+        String target = context.get("target");
+
+        CustACAPI.INSTANCE.getScheduler().getAsyncScheduler().runNow(CustACAPI.INSTANCE.getGrimPlugin(), () -> {
+            OfflinePlatformPlayer targetPlayer = CustACAPI.INSTANCE.getPlatformPlayerFactory().getOfflineFromName(target);
+            ViolationDatabaseManager violations = CustACAPI.INSTANCE.getViolationDatabaseManager();
+
+            // Get last 50 violations to analyze
+            List<Violation> logs = violations.getViolations(targetPlayer.getUniqueId(), 1, 50);
+
+            if (logs.isEmpty()) {
+                sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, "%prefix% &cИгрок &f" + target + " &cчист. Подозрительных движений не обнаружено.")));
+                return;
+            }
+
+            sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, "%prefix% &bАнализ движений игрока &f" + targetPlayer.getName() + "&b:")));
+
+            boolean foundMovement = false;
+            for (Violation log : logs) {
+                String checkLower = log.checkName().toLowerCase();
+                // Simple heuristic for movement checks
+                if (checkLower.contains("fly") || checkLower.contains("speed") || checkLower.contains("motion") ||
+                    checkLower.contains("position") || checkLower.contains("teleport") || checkLower.contains("step") ||
+                    checkLower.contains("scaffold") || checkLower.contains("gravity") || checkLower.contains("nofall") ||
+                    checkLower.contains("strafe") || checkLower.contains("liquid") || checkLower.contains("climb") ||
+                    checkLower.contains("jump") || checkLower.contains("vertical") || checkLower.contains("horizontal")) {
+                    foundMovement = true;
+                    String message = " &8» &7[&f%timeago% назад&7] &bСтранное движение: &f%check% &7(VL: &c%vl%&7)";
+                    sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, message
+                            .replace("%check%", log.checkName())
+                            .replace("%vl%", String.valueOf(log.vl()))
+                            .replace("%timeago%", getTimeAgo(log.createdAt()))
+                    )));
+                }
+            }
+
+            if (!foundMovement) {
+                sender.sendMessage(MessageUtil.miniMessage(MessageUtil.replacePlaceholders(sender, " &8» &7Критических нарушений движения не найдено, есть другие помарки.")));
             }
         });
     }

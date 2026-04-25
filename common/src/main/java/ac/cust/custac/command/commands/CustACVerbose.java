@@ -12,7 +12,7 @@ public class CustACVerbose implements BuildableCommand {
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
         commandManager.command(
-                commandManager.commandBuilder("custac", "custacac")
+                commandManager.commandBuilder("grimac")
                         .literal("verbose")
                         .permission("custac.verbose")
                         .handler(this::handleVerbose)

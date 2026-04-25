@@ -14,7 +14,7 @@ public class CustACReload implements BuildableCommand {
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
         commandManager.command(
-                commandManager.commandBuilder("custac", "custacac")
+                commandManager.commandBuilder("grimac")
                         .literal("reload")
                         .permission("custac.reload")
                         .handler(this::handleReload)

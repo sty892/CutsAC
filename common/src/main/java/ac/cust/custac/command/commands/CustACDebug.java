@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class CustACDebug implements BuildableCommand {
 
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
-        Command.Builder<Sender> custacCommand = commandManager.commandBuilder("custac", "custacac");
+        Command.Builder<Sender> custacCommand = commandManager.commandBuilder("grimac");
 
         // Register "debug" subcommand
         Command.Builder<Sender> debugCommand = custacCommand

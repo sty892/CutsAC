@@ -14,7 +14,7 @@ public class CustACHelp implements BuildableCommand {
     @Override
     public void register(CommandManager<Sender> commandManager, CloudCommandAdapter adapter) {
         commandManager.command(
-                commandManager.commandBuilder("custac", "custacac")
+                commandManager.commandBuilder("ac")
                         .literal("help", Description.of("Display help information"))
                         .permission("custac.help")
                         .handler(this::handleHelp)
